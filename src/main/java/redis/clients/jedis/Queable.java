@@ -10,6 +10,7 @@ public class Queable {
     pipelinedResponses.clear();
   }
 
+  //为每一个response设置返回的结果
   protected Response<?> generateResponse(Object data) {
     Response<?> response = pipelinedResponses.poll();
     if (response != null) {

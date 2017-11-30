@@ -33,7 +33,7 @@ import redis.clients.util.Slowlog;
 public class Jedis extends BinaryJedis implements JedisCommands, MultiKeyCommands,
     AdvancedJedisCommands, ScriptingCommands, BasicCommands, ClusterCommands, SentinelCommands, ModuleCommands {
 
-  protected JedisPoolAbstract dataSource = null;
+  protected JedisPoolAbstract dataSource = null;//该连接属于哪个连接池的
 
   public Jedis() {
     super();

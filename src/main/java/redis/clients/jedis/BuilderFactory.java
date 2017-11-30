@@ -104,6 +104,8 @@ public final class BuilderFactory {
     }
 
   };
+
+  //参数都是字节数组
   public static final Builder<Map<String, String>> STRING_MAP = new Builder<Map<String, String>>() {
     @Override
     @SuppressWarnings("unchecked")
@@ -125,6 +127,7 @@ public final class BuilderFactory {
 
   };
 
+  //参数有字节数组 也有long
   public static final Builder<Map<String, String>> PUBSUB_NUMSUB_MAP = new Builder<Map<String, String>>() {
     @Override
     @SuppressWarnings("unchecked")
@@ -147,6 +150,7 @@ public final class BuilderFactory {
 
   };
 
+  //参数都是字节数组
   public static final Builder<Set<String>> STRING_SET = new Builder<Set<String>>() {
     @Override
     @SuppressWarnings("unchecked")
@@ -236,6 +240,7 @@ public final class BuilderFactory {
 
   };
 
+  //只返回zset的key集合,没有分数
   public static final Builder<Set<String>> STRING_ZSET = new Builder<Set<String>>() {
     @Override
     @SuppressWarnings("unchecked")
@@ -262,6 +267,7 @@ public final class BuilderFactory {
 
   };
 
+  //zset由一个key和一个人double的分数组成
   public static final Builder<Set<Tuple>> TUPLE_ZSET = new Builder<Set<Tuple>>() {
     @Override
     @SuppressWarnings("unchecked")

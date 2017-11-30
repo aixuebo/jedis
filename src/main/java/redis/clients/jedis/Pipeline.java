@@ -66,6 +66,7 @@ public class Pipeline extends MultiKeyPipelineBase implements Closeable {
     this.client = client;
   }
 
+  //在分片的时候是需要根据key获取对应的host客户端的
   @Override
   protected Client getClient(byte[] key) {
     return client;

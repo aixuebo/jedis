@@ -21,6 +21,7 @@ import redis.clients.util.RedisInputStream;
 import redis.clients.util.RedisOutputStream;
 import redis.clients.util.SafeEncoder;
 
+//该类的作用是连接到Redis服务器建立socket,往输出流中写入内容,但是不是真正flush到server
 public class Connection implements Closeable {
 
   private static final byte[][] EMPTY_ARGS = new byte[0][];
@@ -305,6 +306,7 @@ public class Connection implements Closeable {
     }
   }
 
+  //返回一个命令的结果
   protected Object readProtocolWithCheckingBroken() {
     try {
       return Protocol.read(inputStream);
@@ -315,10 +317,11 @@ public class Connection implements Closeable {
   }
 
   public List<Object> getMany(final int count) {
-    flush();
+    flush();//发送
     final List<Object> responses = new ArrayList<Object>(count);
     for (int i = 0; i < count; i++) {
       try {
+        //阻塞收取信息
         responses.add(readProtocolWithCheckingBroken());
       } catch (JedisDataException e) {
         responses.add(e);

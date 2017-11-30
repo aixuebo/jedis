@@ -20,7 +20,7 @@ import redis.clients.jedis.exceptions.JedisConnectionException;
  */
 public class RedisInputStream extends FilterInputStream {
 
-  protected final byte[] buf;
+  protected final byte[] buf;//缓冲数组
 
   protected int count, limit;
 
@@ -41,6 +41,7 @@ public class RedisInputStream extends FilterInputStream {
     return buf[count++];
   }
 
+  //遇见\r\n则结束读取
   public String readLine() {
     final StringBuilder sb = new StringBuilder();
     while (true) {
@@ -51,10 +52,10 @@ public class RedisInputStream extends FilterInputStream {
         ensureFill(); // Must be one more byte
 
         byte c = buf[count++];
-        if (c == '\n') {
+        if (c == '\n') {//则结束读取
           break;
         }
-        sb.append((char) b);
+        sb.append((char) b);//写入\r
         sb.append((char) c);
       } else {
         sb.append((char) b);
@@ -69,6 +70,7 @@ public class RedisInputStream extends FilterInputStream {
     return reply;
   }
 
+  //最多允许读取一次填充数据
   public byte[] readLineBytes() {
 
     /*
@@ -97,7 +99,7 @@ public class RedisInputStream extends FilterInputStream {
       }
     }
 
-    final int N = (pos - count) - 2;
+    final int N = (pos - count) - 2;//-2表示刨除最后的\r\n
     final byte[] line = new byte[N];
     System.arraycopy(buf, count, line, 0, N);
     count = pos;
@@ -176,6 +178,7 @@ public class RedisInputStream extends FilterInputStream {
     return (isNeg ? -value : value);
   }
 
+  //将buf的数据读取到b只,读取len个,存储在b的off位置开始存储
   @Override
   public int read(byte[] b, int off, int len) throws JedisConnectionException {
     ensureFill();
@@ -191,9 +194,9 @@ public class RedisInputStream extends FilterInputStream {
    * exception is thrown to quickly ascertain that the stream was smaller than expected.
    */
   private void ensureFill() throws JedisConnectionException {
-    if (count >= limit) {
+    if (count >= limit) {//说明读取了所有limit的数据
       try {
-        limit = in.read(buf);
+        limit = in.read(buf);//limit表示一个读取了多少个字节到buffer中
         count = 0;
         if (limit == -1) {
           throw new JedisConnectionException("Unexpected end of stream.");

@@ -25,6 +25,7 @@ public final class Protocol {
   private static final String BUSY_RESPONSE = "BUSY";
   private static final String NOSCRIPT_RESPONSE = "NOSCRIPT";
 
+  //redis默认host和port
   public static final String DEFAULT_HOST = "localhost";
   public static final int DEFAULT_PORT = 6379;
   public static final int DEFAULT_SENTINEL_PORT = 26379;
@@ -73,9 +74,11 @@ public final class Protocol {
   public static final String PUBSUB_NUMSUB = "numsub";
   public static final String PUBSUB_NUM_PAT = "numpat";
 
+  //表示boolean类型的字节数组
   public static final byte[] BYTES_TRUE = toByteArray(1);
   public static final byte[] BYTES_FALSE = toByteArray(0);
 
+  //表示正负数的字节数组
   public static final byte[] POSITIVE_INFINITY_BYTES = "+inf".getBytes();
   public static final byte[] NEGATIVE_INFINITY_BYTES = "-inf".getBytes();
 
@@ -83,21 +86,24 @@ public final class Protocol {
     // this prevent the class from instantiation
   }
 
+  //向输出流中写入命令信息
   public static void sendCommand(final RedisOutputStream os, final ProtocolCommand command,
       final byte[]... args) {
     sendCommand(os, command.getRaw(), args);
   }
 
+  //向输出流中写入命令对应的字节数组 以及 命令需要的参数
   private static void sendCommand(final RedisOutputStream os, final byte[] command,
       final byte[]... args) {
     try {
       os.write(ASTERISK_BYTE);
-      os.writeIntCrLf(args.length + 1);
+      os.writeIntCrLf(args.length + 1);//多少个内容,即命令+参数数量
       os.write(DOLLAR_BYTE);
       os.writeIntCrLf(command.length);
       os.write(command);
       os.writeCrLf();
 
+      //写入每一个参数
       for (final byte[] arg : args) {
         os.write(DOLLAR_BYTE);
         os.writeIntCrLf(arg.length);
@@ -215,10 +221,12 @@ public final class Protocol {
     return ret;
   }
 
+  //输入流中解析一个对象
   public static Object read(final RedisInputStream is) {
     return process(is);
   }
 
+  //将各种格式转换成字节数组
   public static final byte[] toByteArray(final boolean value) {
     return value ? BYTES_TRUE : BYTES_FALSE;
   }
@@ -231,6 +239,7 @@ public final class Protocol {
     return SafeEncoder.encode(String.valueOf(value));
   }
 
+  //涉及到正负无穷
   public static final byte[] toByteArray(final double value) {
     if (value == Double.POSITIVE_INFINITY) {
       return POSITIVE_INFINITY_BYTES;
@@ -258,8 +267,9 @@ public final class Protocol {
     SCAN, HSCAN, SSCAN, ZSCAN, WAIT, CLUSTER, ASKING, PFADD, PFCOUNT, PFMERGE, READONLY, GEOADD, GEODIST, 
     GEOHASH, GEOPOS, GEORADIUS, GEORADIUSBYMEMBER, MODULE, BITFIELD, HSTRLEN, TOUCH, SWAPDB;
 
-    private final byte[] raw;
+    private final byte[] raw;//关键字组成的字节数组
 
+    //对关键字进行编码成字节数组
     Command() {
       raw = SafeEncoder.encode(this.name());
     }
@@ -272,9 +282,9 @@ public final class Protocol {
 
   public static enum Keyword {
     AGGREGATE, ALPHA, ASC, BY, DESC, GET, LIMIT, MESSAGE, NO, NOSORT, PMESSAGE, PSUBSCRIBE, PUNSUBSCRIBE, OK, ONE, QUEUED, SET, STORE, SUBSCRIBE, UNSUBSCRIBE, WEIGHTS, WITHSCORES, RESETSTAT, RESET, FLUSH, EXISTS, LOAD, KILL, LEN, REFCOUNT, ENCODING, IDLETIME, GETNAME, SETNAME, LIST, MATCH, COUNT, PING, PONG, UNLOAD;
-    public final byte[] raw;
+    public final byte[] raw;//关键字组成的字节数组
 
-    Keyword() {
+    Keyword() {//对关键字进行编码成字节数组
       raw = SafeEncoder.encode(this.name().toLowerCase(Locale.ENGLISH));
     }
   }
